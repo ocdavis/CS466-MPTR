@@ -4,8 +4,6 @@ import numpy as np
 import networkx as nx
 from dataclasses import dataclass
 from typing import Dict
-
-# Import your simulation functions here:
 from simulate_tree import random_rooted_binary_tree, make_reversible_character, make_irreversible_character, make_tree_character, simulate_on_tree, contract_tree_by_characters
 
 @dataclass
@@ -22,13 +20,16 @@ class BenchmarkCase:
     states: Dict
     characters: Dict
 
-def generate_benchmark_dataset(output_file="data/benchmark_multi_data_3.pkl"):
+def generate_benchmark_dataset():
+    # Method Parameters
+    output_file = "data/benchmark_data_1.pkl"
     leaves_list = [4,10]
     states_list = [4, 7]
     char_types = ["reversible", "irreversible", "tree"]
     char_pairs = list(itertools.combinations_with_replacement(char_types, 3))
     triangle_flags = [True, False]
     n_instances = 5
+    
     
     grid = list(itertools.product(leaves_list, states_list, char_pairs, triangle_flags, triangle_flags, triangle_flags))
     total_runs = len(grid) * n_instances

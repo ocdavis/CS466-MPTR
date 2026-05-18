@@ -8,7 +8,12 @@ from tribal.multi_expansion import ConstructGraphMulti
 from tribal.lineage_tree import MPTR as MPTR_original
 from tribal.mptr_cp_gur import MPTR_CP_GUR
 
-def run_benchmark_comparison(data_file="data/benchmark_multi_data_3.pkl", output_csv="results/benchmark_results_5_18_gur_r1.csv",resume=True):
+def run_benchmark_comparison():
+    # Method Parameters:
+    data_file="data/benchmark_data_1.pkl"
+    output_csv="results/benchmark_results_1.csv"
+    
+
     print(f"Loading benchmark data from {data_file}...")
     with open(data_file, "rb") as f:
         dataset = pickle.load(f)
