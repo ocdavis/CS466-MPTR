@@ -1,9 +1,12 @@
-# TRIBAL: Tree inference of B cell clonal lineages 
+# CS466 Multi-Character Polytomy Refinement
 
+To use the simulations, install the conda environment via the following:
 
 ```bash
 conda env create -f mptr.yml 
 ```
+
+An example of the entire process can be seen in the python notebook "sim_tree.ipynb" for simulating trees with different character types, and running both the multi-commodity flow and cutting-plane ILP formulations for the multi-character polytomy refinement problem.
 
 
 ## Reference
