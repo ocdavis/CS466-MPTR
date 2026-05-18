@@ -3,10 +3,13 @@ import pandas as pd
 import numpy as np
 import pickle
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from tribal import BaseTree
 from tribal.multi_expansion import ConstructGraphMulti
 from tribal.lineage_tree import MPTR as MPTR_original
 from tribal.mptr_cp_gur import MPTR_CP_GUR
+from create_benchmark import BenchmarkCase
 
 def run_benchmark_comparison():
     # Method Parameters:
@@ -32,7 +35,7 @@ def run_benchmark_comparison():
         cg = ConstructGraphMulti(case.states, case.characters, root_identifier=case.root)
         fg = cg.build(base_tree)
 
-        # 1. Original MPTR ILP
+
         start_t = time.perf_counter()
         mptr_orig = MPTR_original(
             fg.G,
@@ -47,7 +50,7 @@ def run_benchmark_comparison():
 
         print(f"Orig time: {time_original}")
 
-        # 2. Cutting Plane MPTR ILP
+
         start_t = time.perf_counter()
         mptr_cp = MPTR_CP_GUR(
             fg.G,
@@ -73,11 +76,9 @@ def run_benchmark_comparison():
             "nodes_in_contracted_tree": case.tree.number_of_nodes(),
             "expansion_nodes": fg.G.number_of_nodes(),
             "expansion_edges": fg.G.number_of_edges(),
-            # "time_original": time_original,
-            "time_gur": time_original,
+            "time_original": time_original,
             "time_cp": time_cp,
-            # "score_original": score_orig if score_orig is not None else np.nan,
-            "score_gur": score_orig if score_orig is not None else np.nan,
+            "score_original": score_orig if score_orig is not None else np.nan,
             "score_cp": score_cp if score_cp is not None else np.nan,
             "score_match": np.isclose(score_orig, score_cp, atol=1e-4) if (score_orig is not None and score_cp is not None) else False,
             "speedup_factor": time_original / (time_cp + 1e-9)

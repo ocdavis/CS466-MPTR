@@ -43,10 +43,8 @@ def generate_benchmark_dataset():
             seed = hash(f"{leaves}_{states}_{c_pair[0]}_{c_pair[1]}_{c_pair[2]}_{triangle_1}{triangle_2}{triangle_3}_{instance}") % (2**32)
             case_id = f"L{leaves}_S{states}_{c_pair[0]}_{c_pair[1]}_{c_pair[2]}_Tri{triangle_1}{triangle_2}{triangle_3}_i{instance}"
             
-            # 1. Generate Tree
             tree, root = random_rooted_binary_tree(leaves, seed=seed)
 
-            # 2. Generate 3 Characters (First two are targets, 3rd is noise for contraction)
             types_to_make = [c_pair[0], c_pair[1], c_pair[2]]
             characters = {}
 
@@ -67,21 +65,17 @@ def generate_benchmark_dataset():
                 elif c_type == "tree":
                     characters[char_name] = make_tree_character(char_name, states, preserve_triangle=triangle)
 
-            # 3. Simulate States
             rng = np.random.default_rng(seed)
             tree, sim_states = simulate_on_tree(tree, root, characters, rng=rng)
 
-            # 4. Contract Tree (Keep char_0 and char_1, collapse on char_2)
             chars_to_contract = ["char_0", "char_1"]
             c_tree, c_states, c_chars = contract_tree_by_characters(
                 tree, sim_states, characters, chars_to_contract
             )
 
-            # Skip if contraction destroyed the tree
             if c_tree.number_of_nodes() < 2:
                 continue
 
-            # 5. Store Case
             case = BenchmarkCase(
                 id=case_id,
                 seed=seed,
