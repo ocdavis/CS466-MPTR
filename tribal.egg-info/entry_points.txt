@@ -1,0 +1,2 @@
+[console_scripts]
+tribal = tribal.cli:main
