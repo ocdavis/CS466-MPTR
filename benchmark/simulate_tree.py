@@ -96,22 +96,17 @@ def random_transition_matrix(
     for _ in range(max_iters):
         P = np.vstack([threshold_and_renormalize(np.random.dirichlet(alphas)) for _ in range(n_states)])
         
-        # 2. Enforce Triangle Inequality using Metric Closure (Floyd-Warshall)
-        # Convert probabilities to distance/cost (add epsilon to avoid log(0))
         eps = 1e-12
         cost_matrix = -np.log(np.clip(P, eps, 1.0))
         
-        # Floyd-Warshall Algorithm: if a path through 'k' is cheaper, use it
         for k in range(n_states):
             for i in range(n_states):
                 for j in range(n_states):
                     if cost_matrix[i, j] > cost_matrix[i, k] + cost_matrix[k, j]:
                         cost_matrix[i, j] = cost_matrix[i, k] + cost_matrix[k, j]
                         
-        # 3. Convert back to probabilities
         P_fixed = np.exp(-cost_matrix)
         
-        # 4. Renormalize the rows so they perfectly sum to 1.0 again
         for i in range(n_states):
             P_fixed[i] = threshold_and_renormalize(P_fixed[i])
         
@@ -129,7 +124,6 @@ def random_transition_matrix(
             if not all_valid: break
             
         if all_valid:
-            # print("Returned triangle ineq for fully connected transition matrix")
             return P_fixed
             
     print("Reached max iterations for fully connected transition matrix")
@@ -144,7 +138,6 @@ def random_irreversible_transition_matrix(
 ) -> np.ndarray:
     P = np.zeros((n_states, n_states), dtype=float)
     
-    # Process bottom-up (reverse order) so descendants are available for checking
     for i in range(n_states - 1, -1, -1):
         k_len = n_states - i
         alphas = np.full(k_len, alpha, dtype=float)
@@ -318,7 +311,6 @@ def random_dag_transition_matrix(
                 if np.random.rand() < edge_prob:
                     reachable[i].append(j)
                     
-    # Process bottom-up (reverse topological order)
     for i in range(n_states - 1, -1, -1):
         reach = sorted(reachable[i]) 
         k_len = len(reach)
@@ -338,7 +330,6 @@ def random_dag_transition_matrix(
                 all_valid = True
                 for j in reach:
                     if j == i: continue
-                    # ensure transitioning through j doesn't override the direct path
                     for k in reachable[j]:
                         if k in proposed_P:
                             if proposed_P[k] < proposed_P[j] * P[j, k]:
@@ -491,7 +482,6 @@ def construct_expansion_graph(tree, states, characters, root_node):
     expanded_map[root_node].append(root_id)
 
     for u in nx.topological_sort(tree):
-        #u != root_node and
         if tree.out_degree(u) > 0:
             frontier = list(expanded_map[u])
             seen_in_u = set(frontier)

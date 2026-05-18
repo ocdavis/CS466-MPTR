@@ -9,7 +9,6 @@ from .base_tree import BaseTree
 from .small_parsimony import SmallParsimony
 from .expansion_graph import ConstructGraph
 from .mptr import MPTR
-from .mptr_dag import MPTR_DAG
 from .draw_tree import DrawTree
 from .utils import save_dict, write_fasta
 
@@ -262,20 +261,12 @@ class LineageTree:
         cg = ConstructGraph(cost, isotype_labels, root_identifier=self.root)
         fg = cg.build(self.tree)
 
-        if(ilp_type==1):
-            st = MPTR(fg.G,
-                    self.tree.T,
-                    fg.find_terminals(),
-                    fg.iso_weights,
-                    fg.tree_to_graph,
-                    root=self.root)
-        else:
-            st = MPTR_DAG(fg.G,
-                    self.tree.T,
-                    fg.find_terminals(),
-                    fg.iso_weights,
-                    fg.tree_to_graph,
-                    root=self.root)
+        st = MPTR(fg.G,
+                self.tree.T,
+                fg.find_terminals(),
+                fg.iso_weights,
+                fg.tree_to_graph,
+                root=self.root)
         
         self.csr_obj, tree = st.run()
 
